@@ -180,7 +180,8 @@ Having MIN(age)<25;
 
 
 ## Grade
-  <img width="1359" height="99" alt="image" src="https://github.com/user-attachments/assets/136586e4-8d82-42f4-89ae-0558f769193e" />
+  <img width="1069" height="93" alt="image" src="https://github.com/user-attachments/assets/5cf332ee-c0a0-40e1-b25a-beeecad1e142" />
+
 
 
 ## RESULT
