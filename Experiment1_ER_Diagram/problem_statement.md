@@ -8,7 +8,7 @@ Gain hands-on experience in designing ER diagrams that represent database struct
 
 ---
 
-# Scenario A: City Fitness Club Managements
+# Scenario A: City Fitness Club Management
 
 **Business Context:**  
 FlexiFit Gym wants a database to manage its members, trainers, and fitness programs.
@@ -22,34 +22,33 @@ FlexiFit Gym wants a database to manage its members, trainers, and fitness progr
 - Payments tracked for memberships and sessions.
 
 ### ER Diagram:
+![WhatsApp Image 2025-08-28 at 21 41 52_0d3b2057](https://github.com/user-attachments/assets/067a8872-0a16-4d0f-80c3-cde5fbe2cb97)
 
-<img width="958" height="761" alt="image" src="https://github.com/user-attachments/assets/56474a0d-08ef-475c-8d48-eaef8ef4bcd2" />
 
 ### Entities and Attributes
 
-| **Entity**     | **Attributes (PK, FK)**                                                                                                        | **Notes**                                       |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
-| **Member**     | **PK:** Member\_id <br> Attributes: Name, Membership\_type                                                                     | Stores details of gym members                   |
-| **Trainer**    | **PK:** Trainer\_id <br> Attributes: Name, Specialization                                                                      | Stores trainer details                          |
-| **Program**    | **PK:** Program\_id <br> Attributes: Program\_name, Description, Schedule                                                      | Training programs offered                       |
-| **Session**    | **PK:** Session\_id <br> **FKs:** Member\_id, Trainer\_id, Program\_id <br> Attributes: Session\_type, Session\_schedule       | Represents a training session                   |
-| **Payment**    | **PK:** Payment\_id <br> **FKs:** Member\_id, Session\_id <br> Attributes: Payment\_date, Amount, Payment\_type, Reference\_id | Stores payment records for memberships/sessions |
-| **Attendance** | **PK:** Attendance\_id <br> **FKs:** Member\_id, Session\_id <br> Attributes: Status                                           | Tracks member attendance in sessions            |
+| Entity | Attributes (PK, FK)                | Notes   |
+|--------|--------------------                |----------|
+| User   |user_id (PK), name,mobile_no, address |Identifies the user.|  
+| Permission| per_id (PK), per_module, per_name|Defines permissions granted to the user.|       
+|Trainer| trainer_id (PK), name, mobile, email|Represents trainers managing the members.|      
+| Member|mem_id (PK), mem_type, mem_name, mem_mobile, mem_email| Represents gym members.|       
+| Fitness|fit_id (PK), fit_type, fit_desc|Defines the fitness programs.|          
+
 
 ### Relationships and Constraints
 
-| **Relationship**          | **Entities Involved** | **Cardinality**              | **Participation**                     | **Notes**                                                                      |
-| ------------------------- | --------------------- | ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------ |
-| **Assigned\_by**          | Member – Trainer      | 1 Trainer : Many Members     | Member (Total), Trainer (Partial)     | Each member must be assigned a trainer; a trainer may train multiple members   |
-| **Specified\_course**     | Session – Program     | Many Sessions : 1 Program    | Session (Total), Program (Partial)    | Each session belongs to a program; a program may have multiple sessions        |
-| **Specified\_time**       | Member – Session      | 1 Member : Many Sessions     | Member (Partial), Session (Total)     | A member can have many sessions; each session is scheduled for one member      |
-| **Amount\_collected**     | Session – Payment     | 1 Session : Many Payments    | Session (Partial), Payment (Total)    | A session may have multiple payments; each payment must be linked to a session |
-| **Presence\_in\_session** | Attendance – Session  | Many Attendances : 1 Session | Attendance (Total), Session (Partial) | Tracks attendance per session; each attendance record belongs to one session   |
+| Relationship | Cardinality | Participation | Notes |
+|--------------|------------|---------------|-------|
+|User - Permission|1:N|Mandatory (A user must have at least one permission) | A user can have multiple permissions.|     
+| User - Trainer| N:M|Optional (User may or may not be a trainer)| A user can manage many trainers and vice versa.|
+| Trainer - Fitness|1:N|Mandatory (A trainer must be associated with at least one fitness type)|Trainers manage fitness types.|
+|Member - Fitness|N:M|Optional (Members may or may not be associated with a fitness type)|A member can be associated with multiple fitness types.|
 
 ### Assumptions
-- All IDs (Member_id, Trainer_id, Program_id, Session_id, Payment_id, Attendance_id) are primary keys and unique.
-- Foreign key relationships ensure referential integrity (e.g., a payment cannot exist without a valid member and session).
-- The system assumes each member is assigned at least one trainer and the system records both financial (payments) and non-financial (attendance, schedules) aspects of gym operations.
+- Role-Based Access: Users have different roles (e.g., admin, trainer, member), with permissions assigned based on their role.
+- Trainer-Managed Programs: Trainers manage fitness programs, and members can join multiple fitness types, each guided by a trainer.
+- Flexible Member Participation: Members can participate in multiple fitness programs, with flexibility in the types and number of programs they join.
 
 ---
 
@@ -67,119 +66,85 @@ The Central Library wants to manage book lending and cultural events.
 - Overdue fines apply for late returns.
 
 ### ER Diagram:
-y<img width="1009" height="798" alt="image" src="https://github.com/user-attachments/assets/d410adf3-7db1-41cb-98a8-b0860ff54d1e" />
+![WhatsApp Image 2025-08-28 at 21 50 47_6450048c](https://github.com/user-attachments/assets/034cadae-7259-4771-b862-b124130efb47)
 
 
 ### Entities and Attributes
 
-Entity                         |  Attributes (PK, FK)                                                                      |  Notes        |
-|------------------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-Book                           |  ISBN (PK), autho, title, edition, category, price, PublisherId (FK)                      |  A Book is linked to a Publisher. ISBN is the unique identifier.                                                             |   
-Publisher                      |  PublisherId (PK), Year of publication, name                                              |  The Book entity uses this PK as an FK to show which publisher published it.                                                 |   
-Reader                         |  UserId (PK), Email, address, phone no, firstname, lastname, LoginID (FK)                 |  UserId is the unique identifier. Name is split into firstname and lastname (Composite). Phone no is Multi-valued (see note).|   
-Authentication System          |  LoginID (PK), password                                                                   |  This PK is used as an FK in the Reader entity to link the login details.                                                    |   
-Staff                          |  staff_id (PK), name                                                                      |  This identifies library staff members.                                                                                      |   
-Reserve/Return (Relationship)  |  Reg_no (PK), UserId (FK), ISBN (FK), Reserve date, Due date, Return date, staff_id (FK)  |  This is a transaction table that replaces the Reports entity and links the Reader and Book. Reg_no is the unique transaction ID.|
+| Entity | Attributes (PK, FK) | Notes |
+|--------|--------------------|-------|
+|Member|member_id (PK), name|Represents library members.|
+|Book|book_id (PK), title|Represents books available for loan.|
+|Loan|loan_id (PK), date, return_date, member_id (FK), book_id (FK)|Represents the loan transactions between members and books.|
+|Event|event_id (PK), name, date|Represents events that members can register for.|
+|Speaker|speaker_id (PK), name|Represents speakers for events.|
 
 ### Relationships and Constraints
 
-Relationship                                   |  Cardinality  |  Participation   |  Notes                                                   |                                    
------------------------------------------------|---------------|------------------|------------------------------------------------------------------------------------------|
-Reader reserves Books                          |  1:N          |  Reader: Total   |  A reader can reserve many books; each book is reserved by only one reader.               |   
-Publisher publishes Books                      |  1:N          |  Book: Total     |  A publisher can publish many books; each book is published by only one publisher.         |  
-Staff keeps track of Readers                   |  M:N          |  Staff: Partial  |  Multiple staff can track multiple readers; tracking is not mandatory for all.              | 
-Staff maintains Reports                        |  1:N          |  Staff: Total    |  Each staff maintains multiple reports; every report is maintained by one staff member.      |
-Staff maintains Books                          |  1:N          |  Staff: Partial  |  Each staff maintains multiple books; not all staff may maintain books.                      |
-Authentication System provides login to Staff  |  1:N          |  Staff: Total    |  Each authentication system provides login to multiple staff members; every staff must login.|
+| Relationship | Cardinality | Participation | Notes |
+|--------------|------------|---------------|-------|
+|Member - Loan|1:N|Mandatory (A member must have at least one loan)|A member can loan multiple books, but a loan belongs to one member.|
+|Book - Loan|1:N|Mandatory (A book must be loaned to at least one member)|A book can be loaned to multiple members over time, but a loan record is for one book.|
+|Member - Event|M:N|Optional (A member may or may not register for an event)|Members can register for many events, and each event can have many members.|
+|Speaker - Event|M:N|Optional (An event may or may not have a speaker)|An event can have multiple speakers, and a speaker can be assigned to multiple events.|
 ### Assumptions
-- Each reader must have a valid login credential in the authentication system before borrowing or reserving books.
-
-- A book can be reserved by only one reader at a time, but may be borrowed multiple times by different readers over time.
-
-- Phone number is a multi-valued attribute for readers, allowing multiple contact numbers per user.
-
-- Overdue fines are calculated automatically based on the difference between the return date and due date.
-
-- Each reservation/return transaction (Reg_no) uniquely identifies one borrowing instance and links one reader to one book.
-
-- Every book must belong to a single publisher, but one publisher can publish many books.
-
-- Staff members are responsible for maintaining book records, managing reservations, and assisting readers, though not all staff handle all functions.
-
-- Each staff member also logs in using the authentication system, ensuring secure and authorized access.
-
-- All events are organized by the library and may have one or more speakers/authors, but each event must be assigned to a room.
-
-- Rooms can be booked either for study purposes or for cultural events, not simultaneously for both activities.
-
-- Deletion of a reader record is restricted until all borrowed books are returned and pending fines are cleared.
-
-- System ensures referential integrity, meaning no orphan books, readers, or transactions exist without proper linkages to their related entities.
+- Member-Book Loan System: A Member can borrow multiple Books with a Loan representing each borrowing transaction, which includes the loan and return dates.
+- Event Participation: Members can register for multiple Events, and each Event can have multiple Members attending, with optional speakers.
+- Speaker-Event Association: Events may feature one or more Speakers, and a Speaker can be involved in multiple Events.
 
 ---
 
-# Scenario C: Restaurant Table Reservation & Ordering
+##  Scenario C: Restaurant Table Reservation & Ordering
 
-**Business Context:**  
-A popular restaurant wants to manage reservations, orders, and billing.
+###  Business Context
+A popular restaurant wants to manage *reservations, orders, and billing*.
 
-**Requirements:**  
-- Customers can reserve tables or walk in.  
-- Each reservation includes date, time, and number of guests.  
-- Customers place food orders linked to reservations.  
-- Each order contains multiple dishes; dishes belong to categories (starter, main, dessert).  
-- Bills generated per reservation, including food and service charges.  
-- Waiters assigned to serve reservations.
+###  Requirements
+- Customers can *reserve tables* or walk in.  
+- Each reservation includes *date, time, number of guests*.  
+- Customers place *food orders linked to reservations*.  
+- Each order contains *multiple dishes; dishes belong to **categories* (starter, main, dessert).  
+- *Bills* generated per reservation, including food and service charges.  
+- *Waiters* assigned to serve reservations.  
 
-### ER Diagram:
-<img width="1302" height="1055" alt="image" src="https://github.com/user-attachments/assets/c8488a91-0dd4-4343-8869-fc9913a52c9a" />
+###  ER Diagram
+![WhatsApp Image 2025-08-29 at 14 35 17_70104f15](https://github.com/user-attachments/assets/a20b22a6-154f-4287-be24-9239a5bfd22e)
 
-### Entities and Attributes
+###  Entities and Attributes
+| Entity    | Attributes (PK, FK) | Notes |
+|-----------|----------------------|-------|
+| Customer  | CustomerID (PK), Name, Contact | Makes reservations |
+| Reservation | ReservationID (PK), Date, Time, Guests, CustomerID (FK), TableID (FK) | Booking info |
+| Table     | TableID (PK), Capacity, Location | Dining tables |
+| Order     | OrderID (PK), ReservationID (FK), Time | Linked to reservations |
+| Dish      | DishID (PK), Name, Category, Price | Ordered item |
+| OrderDetail | OrderID (FK), DishID (FK), Quantity | Resolves M:N |
+| Bill      | BillID (PK), ReservationID (FK), Amount, ServiceCharge | Final payment |
+| Waiter    | WaiterID (PK), Name | Assigned to reservations |
 
-Entity              |  Attributes (PK, FK)                                                                           |  Notes                                    
---------------------|------------------------------------------------------------------------------------------------|-------------------------------------------
-Customer            |  C_ID (PK), Mobile_No, Address, Review, Res_ID (FK)                                            |  Writes review, makes reservation         
-Restaurant          |  Res_ID (PK), Res_name, Description, E-Menu, Type, Contact_No, Address, City                   |  Owns tables, receives reservations       
-Table               |  T_ID (PK), Res_ID (FK), Capacity, Vacant(Y/N), Reserved(Y/N)                                  |  Linked to restaurant, reserved in booking
-Reservation         |  R_ID (PK), Res_ID (FK), RD_time, RD_Date, C_ID (FK), T_ID (FK), R_Time, R_Date, No_Of_Guests  |  Includes customer and table references   
-Review              |  Res_ID (FK), C_ID (FK), Review                                                                |  Written by customer for restaurant       
-Administrator       |  A_ID (PK), Name, E-Mail, Mobile_No                                                            |  Handles login, manages establishments    
-Login               |  User_ID (PK), Password, C_ID (FK), User_ID (PK)                                               |  Customer/admin login details             
-No_Of_Reservations  |  C_ID (FK), User_ID (FK)                                                                       |  Tracks reservation count    
+###  Relationships and Constraints
+| Relationship | Cardinality | Participation | Notes |
+|--------------|-------------|---------------|-------|
+| Customer–Reservation | 1:N | Partial | A customer can have multiple reservations |
+| Reservation–Table | 1:1 | Total | One reservation per table |
+| Reservation–Order | 1:N | Total | Orders linked to reservation |
+| Order–Dish | M:N | Total | Resolved using OrderDetail |
+| Reservation–Bill | 1:1 | Total | One bill per reservation |
+| Reservation–Waiter | 1:1 | Partial | Assigned waiter |
 
-Relationship            |  Cardinality  |  Participation                                   |  Notes                                                                                     
-------------------------|---------------|--------------------------------------------------|--------------------------------------------------------------------------------------------
-Customer–Review         |  1:N          |  Customer (mandatory), Review (optional)         |  A customer can write multiple reviews; each review belongs to one customer                
-Restaurant–Table        |  1:N          |  Restaurant (mandatory), Table (optional)        |  A restaurant has multiple tables; each table belongs to one restaurant                    
-Customer–Reservation    |  1:N          |  Customer (mandatory), Reservation (optional)    |  A customer can make multiple reservations; each reservation is tied to one customer       
-Table–Reservation       |  1:N          |  Table (mandatory), Reservation (optional)       |  Each table can have multiple reservations over time, but each reservation is for one table
-Restaurant–Reservation  |  1:N          |  Restaurant (mandatory), Reservation (optional)  |  A restaurant can have multiple reservations, each reservation is for one restaurant       
-Administrator–Login     |  1:1          |  Admin (mandatory), Login (mandatory)            |  Each administrator has a unique login                                                     
-Customer–Login          |  1:1          |  Customer (mandatory), Login (mandatory)         |  Each customer has a unique login               
+###  Assumptions
+- Each reservation *occupies one table* only.  
+- Bills always generated *per reservation*.  
+- Service charges fixed percentage (not modeled).  
 
-### Assumptions
-- Each customer must be registered and authenticated via a unique login before making reservations or submitting reviews.​
-
-- A review is always linked to both a customer (author) and a restaurant; reviews cannot exist independently.​
-
-- Every table belongs to one restaurant only; there is no sharing of tables between restaurants.​
-
-- Reservations require information about customer, table, and restaurant, ensuring all three entities participate in every booking.​
-
-- An administrator must have a distinct login and is responsible for system management; no overlap is allowed between administrator and customer roles.​
-
-- The No_Of_Reservations entity assumes that reservation counts are tracked per user and customer, possibly for analytics or tracking frequent users.​
-
-- Hotel and table availability are tracked using reserved/vacant attributes, supporting dynamic assignment during bookings.​
-
-- E-Menus, descriptions, and other restaurant details are directly associated and accessed only via the Restaurant entity.
+---
+##  Instructions for Students
+1. Complete *all three scenarios (A, B, C)*.  
+2. Identify *entities, relationships, and attributes* for each scenario.  
+3. Draw ER diagrams using *draw.io / diagrams.net* (or hand-drawn & scanned).  
+4. Fill in *Entities, Relationships, Assumptions* tables.  
+5. Export the completed Markdown (with diagrams) as a *single PDF*.  
 
 ---
 
-## Instructions for Students
-
-1. Complete **all three scenarios** (A, B, C).  
-2. Identify entities, relationships, and attributes for each.  
-3. Draw ER diagrams using **draw.io / diagrams.net** or hand-drawn & scanned.  
-4. Fill in all tables and assumptions for each scenario.  
-5. Export the completed Markdown (with diagrams) as **a single PDF**
+  End of Submission Template
